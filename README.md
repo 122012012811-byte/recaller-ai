@@ -346,9 +346,6 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 # Weather dashboard (recommended: server-side only)
 OPENWEATHER_API_KEY=your_openweathermap_api_key_here
-
-# Optional fallback for local-only experiments
-NEXT_PUBLIC_OPENWEATHER_API_KEY=your_openweathermap_api_key_here
 ```
 
 **Get your OpenWeatherMap API key:**

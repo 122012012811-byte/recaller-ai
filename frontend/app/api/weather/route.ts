@@ -19,7 +19,7 @@ interface OneCallResponse {
   alerts?: WeatherAlert[];
 }
 
-const API_KEY = process.env.OPENWEATHER_API_KEY ?? process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+const API_KEY = process.env.OPENWEATHER_API_KEY;
 
 export async function GET(request: Request) {
   if (!API_KEY) {
@@ -135,7 +135,7 @@ async function fetchWeather<T>(path: string, params: Record<string, string>): Pr
   });
 
   const response = await fetch(endpoint, {
-    cache: "no-store",
+    next: { revalidate: 300 },
   });
 
   const payload = await response.json();

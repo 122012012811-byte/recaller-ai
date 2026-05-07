@@ -25,19 +25,31 @@ export function SearchBar({ onSearch, recentSearches, activeCity }: SearchBarPro
       return;
     }
 
-    const timeoutId = window.setTimeout(async () => {
-      setIsLoadingSuggestions(true);
-      try {
-        const nextSuggestions = await searchCities(query);
-        setSuggestions(nextSuggestions);
-      } catch {
-        setSuggestions([]);
-      } finally {
-        setIsLoadingSuggestions(false);
-      }
+    let isCancelled = false;
+    const timeoutId = window.setTimeout(() => {
+      void (async () => {
+        setIsLoadingSuggestions(true);
+        try {
+          const nextSuggestions = await searchCities(query);
+          if (!isCancelled) {
+            setSuggestions(nextSuggestions);
+          }
+        } catch {
+          if (!isCancelled) {
+            setSuggestions([]);
+          }
+        } finally {
+          if (!isCancelled) {
+            setIsLoadingSuggestions(false);
+          }
+        }
+      })();
     }, 300);
 
-    return () => window.clearTimeout(timeoutId);
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(timeoutId);
+    };
   }, [query]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {

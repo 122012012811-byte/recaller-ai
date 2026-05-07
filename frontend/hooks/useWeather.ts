@@ -29,11 +29,14 @@ export function useWeather() {
       };
     }
 
+    const storedUnit = window.localStorage.getItem(STORAGE_KEYS.unit);
+    const unit: TemperatureUnit = storedUnit === "imperial" ? "imperial" : "metric";
+
     return {
       data: null,
       error: null,
       isLoading: true,
-      unit: (window.localStorage.getItem(STORAGE_KEYS.unit) as TemperatureUnit | null) ?? "metric",
+      unit,
       recentSearches: JSON.parse(window.localStorage.getItem(STORAGE_KEYS.history) ?? "[]") as string[],
       activeCity: window.localStorage.getItem(STORAGE_KEYS.lastCity) ?? DEFAULT_CITY,
     };

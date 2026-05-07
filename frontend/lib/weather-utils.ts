@@ -149,11 +149,10 @@ export function groupForecastByDay(forecast: ForecastData): DailyForecastItem[] 
 
   return Array.from(grouped.values())
     .slice(0, 5)
-    .map((day) => {
-      const { middayDistance, ...rest } = day;
-      void middayDistance;
-      return rest;
-    });
+    .map(
+      (day) =>
+        Object.fromEntries(Object.entries(day).filter(([key]) => key !== "middayDistance")) as DailyForecastItem,
+    );
 }
 
 export function fallbackHourlyFromForecast(forecast: ForecastData): HourlyForecastItem[] {
