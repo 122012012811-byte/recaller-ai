@@ -3,7 +3,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.11-blue.svg)
-![Next.js](https://img.shields.io/badge/next.js-14-black.svg)
+![Next.js](https://img.shields.io/badge/next.js-16-black.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)
 
 > **100% FREE STACK** • **Beginner Friendly** • **Production Ready**
@@ -35,7 +35,7 @@ Perfect for **students**, **researchers**, **professionals**, and anyone who wan
 ┌─────────────────────────────────────────────────────────────────┐
 │                    RECALLR AI ARCHITECTURE                      │
 ├─────────────────────────────────────────────────────────────────┤
-│  📱 FRONTEND (Next.js 14 + TypeScript + Tailwind)              │
+│  📱 FRONTEND (Next.js 16 + TypeScript + Tailwind)              │
 │     ↓ User uploads file                                         │
 │  🐍 BACKEND (Python FastAPI)                                    │
 │     → Extract text (PyMuPDF / Tesseract OCR / Whisper)         │
@@ -52,7 +52,7 @@ Perfect for **students**, **researchers**, **professionals**, and anyone who wan
 ```
 
 **Tech Stack:**
-- **Frontend:** Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion
+- **Frontend:** Next.js 16, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion
 - **Backend:** Python FastAPI, LangChain, sentence-transformers
 - **Database:** Supabase (PostgreSQL + pgvector + Auth + Storage)
 - **AI Models:** GPT-4o, GPT-4.1, GPT-5 mini (FREE via GitHub Models)
@@ -87,6 +87,13 @@ Perfect for **students**, **researchers**, **professionals**, and anyone who wan
 - Your data stays in YOUR Supabase instance
 - Row-level security (RLS) ensures users see only their own files
 - No data shared with third parties
+
+### 🌤️ Weather Dashboard
+- `/weather` route with current weather, UV index, sunrise/sunset, wind, pressure, and visibility
+- City autocomplete, recent searches, favorites, and “Use my location”
+- 24-hour trend cards, 5-day forecast, dark/light theme toggle, and animated weather background
+- Server-side API proxy keeps the OpenWeatherMap API key out of the browser
+- LocalStorage caching keeps responses fresh for 5 minutes and reduces repeat API calls
 
 ---
 
@@ -336,7 +343,17 @@ cp .env.example .env.local
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
 NEXT_PUBLIC_API_URL=http://localhost:8000
+
+# Weather dashboard (recommended: server-side only)
+OPENWEATHER_API_KEY=your_openweathermap_api_key_here
 ```
+
+**Get your OpenWeatherMap API key:**
+1. Create a free account at [openweathermap.org/api](https://openweathermap.org/api)
+2. Open **My API keys**
+3. Copy the generated key into `frontend/.env.local`
+
+**Weather dashboard route:** `http://localhost:3000/weather`
 
 **Run the frontend:**
 ```bash
@@ -353,6 +370,8 @@ Visit: `http://localhost:3000`
 recaller-ai/
 ├── frontend/                    # Next.js app
 │   ├── app/
+│   │   ├── api/weather/route.ts # Secure OpenWeatherMap proxy
+│   │   ├── weather/page.tsx     # Weather dashboard
 │   │   ├── (auth)/
 │   │   │   ├── login/page.tsx
 │   │   │   └── signup/page.tsx
@@ -365,10 +384,13 @@ recaller-ai/
 │   │   └── layout.tsx
 │   ├── components/
 │   │   ├── ui/                 # shadcn components
+│   │   ├── weather/            # Weather cards + dashboard UI
 │   │   ├── layout/
 │   │   ├── upload/
 │   │   └── chat/
-│   └── lib/
+│   ├── hooks/                  # Weather/favorites/geolocation hooks
+│   ├── lib/                    # Weather API helpers + utilities
+│   └── types/                  # Shared weather types
 │
 ├── backend/
 │   ├── app/
@@ -425,6 +447,26 @@ recaller-ai/
 
 ---
 
+## 🌤️ Weather Dashboard Guide
+
+### Features Overview
+- **Current weather:** temperature, feels like, humidity, wind direction, pressure, visibility, UV index, sunrise, sunset
+- **Search experience:** city autocomplete, recent searches, favorites, and current geolocation lookup
+- **Forecasting:** next 24 hours of hourly data plus a 5-day outlook
+- **UI polish:** glass-morphism cards, responsive layout, theme toggle, animated background, loading skeletons, and error messaging
+
+### Screenshot
+![Weather dashboard screenshot](https://github.com/user-attachments/assets/eb6130e9-5894-4b97-92fa-ae9fbfa662aa)
+
+### Troubleshooting
+- **“City not found”** → Check spelling or include country/state in the search query
+- **“Unable to fetch weather data”** → Confirm internet access and that OpenWeatherMap is reachable
+- **“Too many requests”** → Wait a minute for the free-tier rate limit to reset
+- **“Location access denied”** → Use manual city search instead
+- **“API key invalid”** → Re-check `OPENWEATHER_API_KEY` in `frontend/.env.local` and restart `npm run dev`
+
+---
+
 ## 🚀 Deployment
 
 ### Frontend (Vercel)
@@ -435,11 +477,12 @@ recaller-ai/
 4. Root Directory: `frontend`
 5. Add Environment Variables:
    ```
-   NEXT_PUBLIC_SUPABASE_URL=your_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
-   NEXT_PUBLIC_API_URL=https://your-backend-url.com
+    NEXT_PUBLIC_SUPABASE_URL=your_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+    NEXT_PUBLIC_API_URL=https://your-backend-url.com
+    OPENWEATHER_API_KEY=your_openweathermap_api_key
    ```
-6. Deploy!
+6. Deploy! The `/weather` dashboard will use the server-side `/api/weather` proxy in production too.
 
 ### Backend (Railway.app)
 
@@ -457,13 +500,10 @@ recaller-ai/
 ## 🧪 Testing
 
 ```bash
-# Backend tests
-cd backend
-pytest
-
-# Frontend tests
+# Frontend checks
 cd frontend
-npm run test
+npm run lint
+npm run build
 ```
 
 ---
