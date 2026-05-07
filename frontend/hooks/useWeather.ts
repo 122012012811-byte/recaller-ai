@@ -17,6 +17,13 @@ interface WeatherState {
 
 export function useWeather() {
   const hasLoadedRef = useRef(false);
+  const [initialCity] = useState(() => {
+    if (typeof window === "undefined") {
+      return DEFAULT_CITY;
+    }
+
+    return window.localStorage.getItem(STORAGE_KEYS.lastCity) ?? DEFAULT_CITY;
+  });
   const [state, setState] = useState<WeatherState>(() => {
     if (typeof window === "undefined") {
       return {
@@ -38,7 +45,7 @@ export function useWeather() {
       isLoading: true,
       unit,
       recentSearches: JSON.parse(window.localStorage.getItem(STORAGE_KEYS.history) ?? "[]") as string[],
-      activeCity: window.localStorage.getItem(STORAGE_KEYS.lastCity) ?? DEFAULT_CITY,
+      activeCity: initialCity,
     };
   });
 
@@ -118,8 +125,8 @@ export function useWeather() {
     }
 
     hasLoadedRef.current = true;
-    void searchByCity(state.activeCity, false);
-  }, [searchByCity, state.activeCity]);
+    void searchByCity(initialCity, false);
+  }, [initialCity, searchByCity]);
 
   const setUnit = (unit: TemperatureUnit) => {
     window.localStorage.setItem(STORAGE_KEYS.unit, unit);

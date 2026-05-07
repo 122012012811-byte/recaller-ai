@@ -109,6 +109,7 @@ async function fetchOneCall(lat: string, lon: string): Promise<OneCallResponse |
 
   for (const endpoint of endpoints) {
     try {
+      // Some free-tier keys may not include One Call 3.0 access, so fall back to 2.5 when needed.
       return await fetchWeather<OneCallResponse>(endpoint, {
         lat,
         lon,

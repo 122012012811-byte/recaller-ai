@@ -159,7 +159,6 @@ export function fallbackHourlyFromForecast(forecast: ForecastData): HourlyForeca
   return forecast.list.slice(0, 8).map((item) => ({
     dt: item.dt,
     temp: item.main.temp,
-    feels_like: item.main.temp,
     humidity: item.main.humidity,
     pop: item.pop,
     weather: item.weather,

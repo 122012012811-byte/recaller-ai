@@ -19,6 +19,8 @@ export function SearchBar({ onSearch, recentSearches, activeCity }: SearchBarPro
   const [suggestions, setSuggestions] = useState<City[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const hasSuggestions = query.trim().length >= 2 && suggestions.length > 0;
+  const shouldShowDropdown = isOpen && (hasSuggestions || recentSearches.length > 0 || isLoadingSuggestions);
 
   useEffect(() => {
     if (query.trim().length < 2) {
@@ -77,10 +79,9 @@ export function SearchBar({ onSearch, recentSearches, activeCity }: SearchBarPro
           className="pl-11"
         />
       </form>
-      {isOpen &&
-      ((query.trim().length >= 2 && suggestions.length > 0) || recentSearches.length > 0 || isLoadingSuggestions) ? (
+      {shouldShowDropdown ? (
         <div className="absolute z-20 mt-2 w-full rounded-3xl border border-white/15 bg-slate-950/90 p-2 shadow-2xl backdrop-blur-lg">
-          {query.trim().length >= 2 && suggestions.length > 0 && (
+          {hasSuggestions && (
             <div className="space-y-1">
               {suggestions.map((city) => (
                 <button

@@ -75,7 +75,7 @@ export interface City {
 export interface HourlyForecastItem {
   dt: number;
   temp: number;
-  feels_like: number;
+  feels_like?: number;
   humidity: number;
   pop: number;
   uvi?: number;
